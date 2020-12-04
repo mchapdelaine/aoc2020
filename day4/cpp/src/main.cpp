@@ -19,12 +19,22 @@ unsigned int getNumberPassportsValidsPart1(const vector<PassportClass>& pPasspor
         if (lPassport.isValidPart1())
         {
             lCount++;
-            //cout << "Passport is valid\n";
         }
-        // else
-        // {
-        //     cout << "Passport is invalid\n";
-        // }
+    }
+
+    return lCount;
+}
+
+unsigned int getNumberPassportsValidsPart2(const vector<PassportClass>& pPassports)
+{
+    unsigned int lCount = 0;
+
+    for (const auto lPassport : pPassports)
+    {
+        if (lPassport.isValidPart2())
+        {
+            lCount++;
+        }
     }
 
     return lCount;
@@ -33,16 +43,6 @@ unsigned int getNumberPassportsValidsPart1(const vector<PassportClass>& pPasspor
 int main(int pArgc, char** pArgv) 
 {
     cout << "Day 4\n";
-
-    // Test birth Year
-    stringstream lNull;
-    PassportClass lTest(lNull);
-    lTest.setByr("2002");
-    
-    cout << "Birth Year valid " << lTest.isBirthYearValid() << endl;
-
-
-    //return 0;
     
     if (pArgc < 2)
     {
@@ -64,7 +64,6 @@ int main(int pArgc, char** pArgv)
     
     while (getline(lInputFile, lTemp))
     {
-        //cout << "Got line " << lTemp << "    length " << lTemp.length() <<  endl;
         if (lTemp.length() != 0)
         {
             lPassportString += lTemp;
@@ -72,9 +71,6 @@ int main(int pArgc, char** pArgv)
         }
         else
         {
-            // Got complete passport
-            //cout << "Got passport loop : " << lPassportString << endl;
-
             stringstream lStream;
             lStream << lPassportString;
 
@@ -84,25 +80,20 @@ int main(int pArgc, char** pArgv)
 
             // Clean passport string
             lPassportString = "";
-
         }
     }
-
-    
 
     // Add the last passport if the file does not end with an empty line
     if (lPassportString.length() != 0)
     {
-        //cout << "Got passport (outside loop) : " << lPassportString << endl;
         stringstream lStream;
         lStream << lPassportString;
         PassportClass lPassport(lStream);
         lPassports.emplace_back(lPassport);
     }
 
-    //cout << "There is " << getNumberPassportsValidsPart1(lPassports) << endl;
-
     cout << "Part 1 : number passports valids : " << getNumberPassportsValidsPart1(lPassports) << endl;
+    cout << "Part 2 : number passports valids : " << getNumberPassportsValidsPart2(lPassports) << endl;
     
     return EXIT_SUCCESS;
 }

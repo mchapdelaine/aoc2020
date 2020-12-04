@@ -32,7 +32,6 @@ PassportClass::PassportClass(stringstream& pPassportString)
 
     while (getline(pPassportString, lField, ' ')) 
     {
-        //cout << "Got first token : " << lField << endl; 
         stringstream lFieldStream;
         lFieldStream << lField;
 
@@ -41,8 +40,6 @@ PassportClass::PassportClass(stringstream& pPassportString)
         string lValue;
         while (getline(lFieldStream, lTypeValue, ':'))
         {
-            //cout << "  -- value : " << lTypeName << endl;
-
             if (lCount == 0)
             {
                 lType = lTypeValue;
@@ -55,53 +52,43 @@ PassportClass::PassportClass(stringstream& pPassportString)
             lCount++;
         }
 
-        //cout << "Got type : " << lType << " and value " << lValue << endl;
-
         if (lType == BIRTH_YEAR)
         {
-            //cout << " - Birth year valid !!!\n";
             aByrValid = true;
             aByr = lValue;
         }
         else if (lType == ISSUE_YEAR)
         {
-            //cout << " - Issue year valid\n";
             aIyrValid = true;
             aIyr = lValue;
         }
         else if (lType == EXPIRATION_YEAR)
         {
-            //cout << " - Expiration year valid\n";
             aEyrValid = true;
             aEyr = lValue;
         }
         else if (lType == HEIGHT)
         {
-            //cout << " - Height valid\n";
             aHgtValid = true;
             aHgt = lValue;
         }
         else if (lType == HAIR_COLOR)
         {
-            //cout << " - Hair color valid\n";
             aHclValid = true;
             aHcl = lValue;
         }
         else if (lType == EYE_COLOR)
         {
-            //cout << " - Eye year valid\n";
             aEclValid = true;
             aEcl = lValue;
         }
         else if (lType == PASSPORT_ID)
         {
-            //cout << " - Passport id valid\n";
             aPidValid = true;
             aPid = lValue;
         }
         else if (lType == COUNTRY_ID)
         {
-            //cout << " - Country ID valid\n";
             aCidValid = true;
             aCid = lValue;
         }
@@ -110,22 +97,23 @@ PassportClass::PassportClass(stringstream& pPassportString)
 
 bool PassportClass::isValidPart1() const noexcept
 {
-    // cout << "YYY=> aByrValid" << aByrValid << endl;
-    // cout << "YYY=> aIyrValid" << aIyrValid << endl;
-    // cout << "YYY=> aEyrValid" << aEyrValid << endl;
-    // cout << "YYY=> aHgtValid" << aHgtValid << endl;
-    // cout << "YYY=> aHclValid" << aHclValid << endl;
-    // cout << "YYY=> aEclValid" << aEclValid << endl;
-    // cout << "YYY=> aPidValid" << aPidValid << endl;
-    // cout << "YYY=> aCidValid" << aCidValid << endl;
-
     return (aByrValid && aIyrValid && aEyrValid && aHgtValid && aHclValid && aEclValid && aPidValid); 
 }
 
 bool PassportClass::isBirthYearValid() const noexcept
 {
     // byr (Birth Year) - four digits; at least 1920 and at most 2002.
-    unsigned int lBirthYear = stoul(aByr);
+    unsigned int lBirthYear;
+    try
+    {
+        lBirthYear = stoul(aByr);
+    }
+    catch(const std::exception& e)
+    {
+        return false;
+    }
+    
+     
     bool lBirthYearValid = false;
     if (lBirthYear >= 1920 && lBirthYear <= 2002)
     {
@@ -138,7 +126,15 @@ bool PassportClass::isBirthYearValid() const noexcept
 bool PassportClass::isIssueYearValid() const noexcept
 {
     // iyr (Issue Year) - four digits; at least 2010 and at most 2020.
-    unsigned int lIssueYear = stoul(aIyr);
+    unsigned int lIssueYear;
+    try
+    {
+        lIssueYear = stoul(aIyr);
+    }
+    catch(const std::exception& e)
+    {
+        return false;
+    }
     bool lIssueYearValid = false;
     if (lIssueYear >= 2010 && lIssueYear <= 2020)
     {
@@ -151,7 +147,15 @@ bool PassportClass::isIssueYearValid() const noexcept
 bool PassportClass::isExpirationYearValid() const noexcept
 {
     // eyr (Expiration Year) - four digits; at least 2020 and at most 2030.
-    unsigned int lExpirationYear = stoul(aEyr);
+    unsigned int lExpirationYear;
+    try
+    {
+        lExpirationYear = stoul(aEyr);
+    }
+    catch(const std::exception& e)
+    {
+        return false;
+    }
     bool lExpirationYearValid = false;
     if (lExpirationYear >= 2020 && lExpirationYear <= 2030)
     {
@@ -178,21 +182,32 @@ bool PassportClass::isHeightValid() const noexcept
     unsigned int lLength = aHgt.length();
     TypeEnum lType = TypeEnum::INVALID;
 
-    if (lLength < 2)
+    // 2 Characters for "cm" or "in" and at least one number
+    if (lLength < 3)
     {
         return false;
     }
 
     if (aHgt[lLength - 2] == 'c' && aHgt[lLength - 1] == 'm')
     {
-        lType == TypeEnum::CENTIMETER;
+        //cout << "Got centimeters\n";
+        lType = TypeEnum::CENTIMETER;
     }
     else if (aHgt[lLength - 2] == 'i' && aHgt[lLength - 1] == 'n')
     {
-        lType == TypeEnum::INCHES;
+        //cout << "Got inches\n";
+        lType = TypeEnum::INCHES;
     }
 
-    unsigned int lValue = stoul(aHgt.substr(0, lLength - 2));
+    unsigned int lValue;
+    try
+    {
+        lValue = stoul(aHgt.substr(0, lLength - 2));
+    }
+    catch(const std::exception& e)
+    {
+        return false;
+    }
 
     switch (lType)
     {
@@ -264,6 +279,7 @@ bool PassportClass::isEyeColorValid() const noexcept
         aEcl == "blu" ||
         aEcl == "brn" ||
         aEcl == "gry" ||
+        aEcl == "grn" ||
         aEcl == "hzl" ||
         aEcl == "oth")
     {
@@ -285,7 +301,7 @@ bool PassportClass::isPassportIdValid() const noexcept
         lPassportIdValid = true;
         for (unsigned int i = 0; i < aPid.length(); i++)
         {
-            if (aPid[i] <= '0' && aPid[i] >= '9')
+            if (aPid[i] < '0' || aPid[i] > '9')
             {
                 lPassportIdValid = false;
                 break;
@@ -299,7 +315,7 @@ bool PassportClass::isPassportIdValid() const noexcept
 bool PassportClass::isValidPart2() const noexcept
 {
     // If no CID, it is still not valid in second part
-    if (!isValidPart1())
+    if (isValidPart1())
     {
         return isBirthYearValid() &&
             isIssueYearValid() &&
@@ -311,5 +327,15 @@ bool PassportClass::isValidPart2() const noexcept
     }
 
     return false;
+}
 
+void PassportClass::debugPassport() const
+{
+    cout << "Birth Year valid : " << aByrValid << " value = " << aByr << endl;
+    cout << "Issue Year valid : " << aIyrValid << " value = " << aIyr << endl;
+    cout << "Expiration Year valid : " << aEyrValid << " value = " << aEyr << endl;
+    cout << "Height valid : " << aHgtValid << " value = " << aHgt << endl;
+    cout << "Hair color valid : " << aHclValid << " value = " << aHcl << endl;
+    cout << "Eye color valid : " << aEclValid << " value = " << aEcl << endl;
+    cout << "Passport valid : " << aPidValid << " value = " << aPid << endl;
 }

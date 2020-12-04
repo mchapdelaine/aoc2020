@@ -28,6 +28,9 @@ class PassportClass
         inline void setIyr(const std::string& pIyr) { aIyr = pIyr; }
         inline std::string getIyr() const { return aIyr; }
 
+        inline void setEyr(const std::string& pEyr) { aEyr = pEyr; }
+        inline std::string getEyr() const { return aEyr; }
+
         inline void setHgt(const std::string& pHgt) { aHgt = pHgt; }
         inline std::string getHgt() const { return aHgt; }
 
@@ -39,6 +42,8 @@ class PassportClass
 
         inline void setPid(const std::string& pPid) { aPid = pPid; }
         inline std::string getPid() const { return aPid; }
+
+        void debugPassport() const;
 
     private:
 
