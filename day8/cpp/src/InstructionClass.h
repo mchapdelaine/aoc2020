@@ -20,6 +20,8 @@ public:
     inline InstructionEnum getInstuction() const noexcept { return aInstruction; }
     inline int getValue() const noexcept { return aValue; }
 
+    void setInstruction(InstructionEnum pInstruction) noexcept { aInstruction = pInstruction; }
+
 private:
     int aValue;
     InstructionEnum aInstruction;

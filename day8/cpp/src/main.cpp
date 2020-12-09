@@ -26,27 +26,21 @@ int executeOnce(const vector<InstructionClass>& pInstructions)
 
         if (pInstructions[lProgramCounter].getInstuction() == InstructionClass::InstructionEnum::NOP)
         {
-            //cout << "Executing NOP\n";
             lProgramCounter++;
         }
         else if (pInstructions[lProgramCounter].getInstuction() == InstructionClass::InstructionEnum::ACC)
         {
-            //cout << "Executing ACC before " << lAcc;
             lAcc += pInstructions[lProgramCounter].getValue();
             lProgramCounter++;
-            //cout << " After " << lAcc << endl;
         }
         else if (pInstructions[lProgramCounter].getInstuction() == InstructionClass::InstructionEnum::JMP)
         {
-            //cout << "Executing JMP\n";
             lProgramCounter += pInstructions[lProgramCounter].getValue();
         }
         else
         {
             cout << "SHOULD NEVER HAPPEN\n";
         }
-        
-        
     }
 
     return lAcc;
