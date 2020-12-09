@@ -90,9 +90,7 @@ RuleClass::RuleClass(const string& pRuleString)
                     }
                 }
             }
-
         }
-        
     }
 
 }

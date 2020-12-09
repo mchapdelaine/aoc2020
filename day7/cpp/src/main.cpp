@@ -70,6 +70,26 @@ unsigned int lNumberOfCombinationPart1(const vector<RuleClass>& lRules, const st
     return lAllBags.size();
 }
 
+uint64_t subBags(const vector<RuleClass>& lRules, const std::string& pBagToSearch, unsigned int lLevel)
+{
+    uint64_t lNumberBags = 0;
+
+    for (const auto lRule : lRules)
+    {
+        if (lRule.getBagName() == pBagToSearch)
+        {
+            for (const auto lContent : lRule.getContent())
+            {
+                lNumberBags += lContent.second;
+                lNumberBags += lContent.second * subBags(lRules, lContent.first, lLevel + 1);
+            }
+
+            break;
+        }
+    }
+
+    return lNumberBags;
+}
 
 int main(int pArgc, char** pArgv) 
 {
@@ -98,7 +118,8 @@ int main(int pArgc, char** pArgv)
         lRules.emplace_back(RuleClass(lTemp));
     }
 
-    cout << "For Part 1, there is \n" << lNumberOfCombinationPart1(lRules, "shiny gold") << " combinaisons\n";
+    cout << "For Part 1, there is " << lNumberOfCombinationPart1(lRules, "shiny gold") << " combinaisons\n";
+    cout << "For Part 2, there is " << subBags(lRules, "shiny gold", 1) << " bags\n";
 
 
     return EXIT_SUCCESS;
