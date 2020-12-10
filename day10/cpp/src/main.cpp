@@ -166,18 +166,70 @@ int main(int pArgc, char** pArgv)
 
     unsigned short lValuesShort[lValues.size()];
 
-    auto lValues2 = lValues;
-    sort(lValues2.begin(), lValues2.end(), [] (unsigned int& a, unsigned int& b) { return a > b; });
+    // Use the difference of 3 jolts as splits
+    vector<unsigned int> lSplitPositions;
 
-    for (unsigned int i = 0; i < lValues2.size() ;i++)
+    for (unsigned int i = 0; i < lValues.size() ;i++)
     {
-        lValuesShort[i] = static_cast<unsigned short>(lValues2[i]);
+        lValuesShort[i] = static_cast<unsigned short>(lValues[i]);
+
+        // Do not check first 0 and last +3 Jolts .. and the last answer
+        if (i != 0 && i < lValues.size() - 2)
+        {
+            if (lValuesShort[i - 1] + 3 == lValuesShort[i])
+            {
+                // Be sure the previous value was not a 3 difference (insert a space)
+                if (find(lSplitPositions.begin(), lSplitPositions.end(), lValuesShort[i]) == lSplitPositions.end())
+                {
+                    lSplitPositions.emplace_back(i);
+                }
+            }
+        }
     }
 
+    uint64_t lNumberArrangmentBetter = 0;
+    for (unsigned int i = 0; i <= lSplitPositions.size(); i++)
+    {
+        unsigned int lFirstPosition;
+        unsigned int lLastPosition;
 
-    uint64_t lNumberArrangment = calcArangments4(lValuesShort, lValues.size(), 0);
+        if (i == 0)
+        {
+            lFirstPosition = 0;
+            lLastPosition = lSplitPositions[i];
+        }
+        else if (i == lSplitPositions.size())
+        {
+            lFirstPosition = lSplitPositions[i - 1];
+            lLastPosition = lValues.size() - 1;
+        }
+        
+        else
+        {
+            lFirstPosition = lSplitPositions[i - 1];
+            lLastPosition = lSplitPositions[i];
+        }
 
-    cout << "For part 2, there is " << lNumberArrangment << " arrangments\n";
+        unsigned short lValuesSplit[lLastPosition - lFirstPosition];
+
+        for (unsigned int j = lFirstPosition; j <= lLastPosition; j++)
+        {
+            lValuesSplit[j - lFirstPosition] = lValuesShort[j];
+        }
+
+        uint64_t lResult = calcArangments2(lValuesSplit, lLastPosition - lFirstPosition, 0);
+
+        if (lNumberArrangmentBetter == 0)
+        {
+            lNumberArrangmentBetter = lResult;
+        }
+        else
+        {
+            lNumberArrangmentBetter *= lResult;
+        }
+    }
+
+    cout << "For part 2, there is " << lNumberArrangmentBetter << " arrangments\n";
 
     return EXIT_SUCCESS;
 }
