@@ -38,9 +38,9 @@ unsigned int calc1and3Jolts(const vector<unsigned int>& pValues, unsigned int& p
 }
 
 // Not Efficient
-unsigned int calcArangments(const vector<unsigned int>& pValues, unsigned int pIndex)
+uint64_t calcArangments(const vector<unsigned int>& pValues, unsigned int pIndex)
 {
-    unsigned int lArrangment = 0;
+    uint64_t lArrangment = 0;
 
     if (pValues.size() - 1 == pIndex)
     {
@@ -54,6 +54,64 @@ unsigned int calcArangments(const vector<unsigned int>& pValues, unsigned int pI
         if (pValues[pIndex] + 3 >= pValues[i])
         {
             lArrangment += calcArangments(pValues, i);
+        }
+        else
+        {
+            // Not valid anymore, break;
+            break;
+        }
+    }
+
+    return lArrangment;
+}
+
+// Not Efficient, faster structures
+uint64_t calcArangments2(const unsigned short* pValues, unsigned int pSize, unsigned int pIndex)
+{
+    uint64_t lArrangment = 0;
+
+    if (pSize - 1 == pIndex)
+    {
+        return 1;
+    }
+
+    unsigned int i = pIndex + 1;
+    for (; i < pSize; i++)
+    {
+        // Valid, continue
+        if (pValues[pIndex] + 3 >= pValues[i])
+        {
+            lArrangment += calcArangments2(pValues, pSize, i);
+        }
+        else
+        {
+            // Not valid anymore, break;
+            break;
+        }
+    }
+
+    return lArrangment;
+}
+
+// Seach from the end first. Same result.
+// "Bruteforcing" is working for the examples, but the input is too large.
+// We need to split the workload in multiple sections
+uint64_t calcArangments4(const unsigned short* pValues, unsigned int pSize, unsigned int pIndex)
+{
+    uint64_t lArrangment = 0;
+
+    if (pSize - 1 == pIndex)
+    {
+        return 1;
+    }
+
+    unsigned int i = pIndex + 1;
+    for (; i < pSize; i++)
+    {
+        // Valid, continue
+        if (pValues[pIndex] <= pValues[i] + 3)
+        {
+            lArrangment += calcArangments4(pValues, pSize, i);
         }
         else
         {
@@ -106,9 +164,18 @@ int main(int pArgc, char** pArgv)
 
     cout << "For part 1, there is 1 Jolts steps " << lNumber1jolt << " and 3 Jolts steps " <<  lNumber3jolt << " and the answer is " << lNumber1jolt * lNumber3jolt << endl;
 
-    cout << "There is " << lValues.size() << " values in vector\n";
+    unsigned short lValuesShort[lValues.size()];
 
-    unsigned int lNumberArrangment = calcArangments(lValues, 0);
+    auto lValues2 = lValues;
+    sort(lValues2.begin(), lValues2.end(), [] (unsigned int& a, unsigned int& b) { return a > b; });
+
+    for (unsigned int i = 0; i < lValues2.size() ;i++)
+    {
+        lValuesShort[i] = static_cast<unsigned short>(lValues2[i]);
+    }
+
+
+    uint64_t lNumberArrangment = calcArangments4(lValuesShort, lValues.size(), 0);
 
     cout << "For part 2, there is " << lNumberArrangment << " arrangments\n";
 
