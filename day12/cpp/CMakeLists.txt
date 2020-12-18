@@ -1,0 +1,5 @@
+project (day12)
+cmake_minimum_required(VERSION 2.8)
+add_subdirectory (src)
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
