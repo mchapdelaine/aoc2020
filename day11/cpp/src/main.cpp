@@ -52,10 +52,10 @@ int main(int pArgc, char** pArgv)
 
     FerryClass lFerry(lFerryString, lRows, lSeatsPerRow);
 
-    //lFerry.displayFerry();
-
     unsigned int lPart1 = lFerry.part1(1000000);
+    unsigned int lPart2 = lFerry.part2(1000000);
     cout << "For part 1, there is " << lPart1 << " empty seats at the end\n";
+    cout << "For part 2, there is " << lPart2 << " empty seats at the end\n";
     
 
     return EXIT_SUCCESS;

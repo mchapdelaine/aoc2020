@@ -11,12 +11,14 @@ public:
     FerryClass(FerryClass&& pMove) = default;
 
     unsigned int part1(unsigned int pMaxLoops) const;
+    unsigned int part2(unsigned int pMaxLoops) const;
 
     static void displayFerry(const std::string& pFerryString, unsigned int pRows, unsigned int pSeatsPerRow);
     inline void displayFerry() const { displayFerry(aFerry, aRows, aSeatsPerRow); } 
 
 private:
     unsigned int countOccupiedAround(const std::string& pFerryString, unsigned int pRow, unsigned int pSeat) const;
+    unsigned int countOccupiedAround2(const std::string& pFerryString, unsigned int pRow, unsigned int pSeat) const;
 
     unsigned int countOccupiedSeats(const std::string& pFerryString) const;
 
