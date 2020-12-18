@@ -103,9 +103,77 @@ InstructionClass::DirectionEnum InstructionClass::getDirectionLeft(DirectionEnum
             return DirectionEnum::EAST;
         }
     }
-    
+
     // If here, throw error
     throw runtime_error("Wrong number of degrees");
+}
+
+void InstructionClass::processWaypointRight(unsigned int pDegrees, int& pSouthNorth, int& pWestEast)
+{
+    // Copy values
+    const int lSouthNorth = pSouthNorth;
+    const int lWestEast = pWestEast;
+
+    if (pDegrees == 90)
+    {
+        // North ==> East
+        // South ==> West
+        pWestEast = lSouthNorth;
+        
+        // East ==> South
+        // West ==> North 
+        pSouthNorth = -lWestEast;
+    }
+    else if (pDegrees == 180)
+    {
+        pSouthNorth = -lSouthNorth;
+        pWestEast = -lWestEast;
+    }
+    else if (pDegrees == 270)
+    {
+        // North ==> West
+        // South ==> East
+        pWestEast = -lSouthNorth;
+        
+        // East ==> North
+        // West ==> South 
+        pSouthNorth = lWestEast;
+    }
+}
+
+
+void InstructionClass::processWaypointLeft(unsigned int pDegrees, int& pSouthNorth, int& pWestEast)
+{
+    // Copy values
+    const int lSouthNorth = pSouthNorth;
+    const int lWestEast = pWestEast;
+
+    if (pDegrees == 90)
+    {
+        // North ==> West
+        // South ==> East
+        pWestEast = -lSouthNorth;
+        
+        // East ==> North
+        // West ==> South 
+        pSouthNorth = lWestEast;
+    }
+    else if (pDegrees == 180)
+    {
+        pSouthNorth = -lSouthNorth;
+        pWestEast = -lWestEast;
+    }
+    else if (pDegrees == 270)
+    {
+        // North ==> East
+        // South ==> West
+        pWestEast = lSouthNorth;
+        
+        // East ==> South
+        // West ==> North 
+        pSouthNorth = -lWestEast;
+    }
+
 }
 
 constexpr char NORTH_LETTER = 'N';
@@ -177,10 +245,61 @@ unsigned int InstructionClass::part1ManhattanSum() const
         }
     }
 
-    cout << "lSouthNorth = " << lSouthNorth << endl;
-    cout << "lWestEast = " << lWestEast << endl;
-
     return abs(lSouthNorth) + abs(lWestEast);
 }
 
 
+unsigned int InstructionClass::part2ManhattanSum() const
+{
+    int lSouthNorth = 0; // Negative value means south, positive value means north
+    int lWestEast = 0; // Negative value means west, positive value means east
+
+    int lWaypointSouthNorth = 1; // Negative value means south, positive value means north
+    int lWaypointWestEast = 10; // Negative value means west, positive value means east
+
+
+    // Process all instructions
+    for (const auto lInstruction : aInstructions)
+    {
+        // Should not exist, throw error
+        if (lInstruction.size() < 2)
+        {
+            throw runtime_error("Invalid instruction");
+        }
+
+        unsigned int lValue = stoul(lInstruction.substr(1));
+
+        if (lInstruction[0] == NORTH_LETTER)
+        {
+            lWaypointSouthNorth += lValue;
+        }
+        else if (lInstruction[0] == SOUTH_LETTER)
+        {
+            lWaypointSouthNorth -= lValue;
+        }
+        else if (lInstruction[0] == EAST_LETTER)
+        {
+            lWaypointWestEast += lValue;
+        }
+        else if (lInstruction[0] == WEST_LETTER)
+        {
+            lWaypointWestEast -= lValue;
+        }
+        else if (lInstruction[0] == LEFT_LETTER)
+        {
+            processWaypointLeft(lValue, lWaypointSouthNorth, lWaypointWestEast);
+        }
+        else if (lInstruction[0] == RIGHT_LETTER)
+        {
+            processWaypointRight(lValue, lWaypointSouthNorth, lWaypointWestEast);
+        }
+        else if (lInstruction[0] == FORWARD_LETTER)
+        {
+            lSouthNorth += lValue * lWaypointSouthNorth;
+            lWestEast += lValue * lWaypointWestEast;
+        }
+
+    }
+
+    return abs(lSouthNorth) + abs(lWestEast);
+}

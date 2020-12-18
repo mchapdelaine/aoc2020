@@ -41,5 +41,8 @@ int main(int pArgc, char** pArgv)
     unsigned int lPart1Sum = lDay.part1ManhattanSum();
     cout << "For part 1, the sum is " << lPart1Sum << endl;
 
+    unsigned int lPart2Sum = lDay.part2ManhattanSum();
+    cout << "For part 2, the sum is " << lPart2Sum << endl;
+
     return EXIT_SUCCESS;
 }
